@@ -28,20 +28,37 @@ public class MainActivity extends AppCompatActivity {
         bClick = (Button) findViewById(R.id.bClick);
         tName = (TextView) findViewById(R.id.tName);
 
-        bClick.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
+    }
+    public void clicked(View view) {
+        switch (view.getId()) {
+            case R.id.bClick:
                 if (eName.getText().toString().isEmpty())
                     tName.setText("Greetings");
                 else {
-                    tName.setText("Hello," + eName.getText());
-                    tName.setTextColor(Color.BLUE);
+                    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                    alert.setTitle("Message");
+                    alert.setMessage("Hello," + eName.getText());
+                    alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Toast.makeText(MainActivity.this,"Good Job",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Toast.makeText(MainActivity.this,"Too Bad",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    alert.create().show();
                 }
+                break;
+            default:
+                System.out.println(view.getId());
 
-            }
 
-        });
+        }
+
     }
 
 }
