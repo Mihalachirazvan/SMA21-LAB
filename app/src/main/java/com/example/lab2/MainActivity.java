@@ -4,7 +4,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,6 +23,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private Button bClick;
     private TextView tName;
     private Spinner spinner;
+    private Button bSearch;
+    private Button bShare;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +38,37 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
-    }
+        bShare = (Button) findViewById(R.id.bShare);
+        bSearch = (Button) findViewById(R.id.bSearch);
+
+        bShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, tName.getText().toString());
+                sendIntent.setType("text/plain");
+
+                Intent chooser = Intent.createChooser(sendIntent, "choose");
+                if (sendIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(chooser);
+                }
+            }
+        });
+
+        bSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent searchIntent = new Intent();
+                searchIntent.setAction(Intent.ACTION_VIEW);
+                searchIntent.setData(Uri.parse("https://www.google.com/search?q="+eName.getText().toString()));
+                if (searchIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(searchIntent);
+                }
+
+            }
+        });
+   }
     public void clicked(View view) {
         switch (view.getId()) {
             case R.id.bClick:
