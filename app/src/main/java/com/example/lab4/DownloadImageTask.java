@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     private Context context;
 
@@ -25,10 +26,31 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
         Bitmap bmp = null;
 
+        try {
+            String longURL = URLTools.getLongUrl(urls[0]);
+            try {
+                InputStream in = new URL(longURL).openStream();
+                bmp = BitmapFactory.decodeStream(in);
+
+            } catch (Exception e) {
+                Log.e("Error Message", e.getMessage());
+                e.printStackTrace();
+            }
+
+            // simulate longer job ...
+            Thread.sleep(5000);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         return bmp;
 
 
     }
+
     protected void onPostExecute(Bitmap result) {
         // save bitmap result in application class
         ((MyApplication) context.getApplicationContext()).setBitmap(result);

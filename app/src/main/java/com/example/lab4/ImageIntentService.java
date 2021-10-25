@@ -50,6 +50,7 @@ public class ImageIntentService extends IntentService {
             ((MyApplication) getApplicationContext()).setBitmap(bmp);
             // start second activity to show result
             Intent intent = new Intent(getApplicationContext(), ImageActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
 
         } catch (IOException e) {

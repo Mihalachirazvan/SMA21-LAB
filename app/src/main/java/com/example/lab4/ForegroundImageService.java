@@ -1,6 +1,7 @@
 package com.example.lab4;
 
 import static android.app.Service.START_STICKY;
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -20,6 +21,7 @@ public class ForegroundImageService extends Service {
 
     public ForegroundImageService() {
     }
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -54,6 +56,7 @@ public class ForegroundImageService extends Service {
 
             // start second activity to show result
             Intent anotherIntent = new Intent(getApplicationContext(), ImageActivity.class);
+            anotherIntent.setFlags(FLAG_ACTIVITY_NEW_TASK);
             startActivity(anotherIntent);
         }
         return START_STICKY;
