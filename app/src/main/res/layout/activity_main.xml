@@ -10,97 +10,66 @@
         android:id="@+id/tStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="No entries found for January"
+        android:hint="Found 5 payments for this month"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.146"
+        app:layout_constraintHorizontal_bias="0.224"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.2" />
+        app:layout_constraintVertical_bias="0.088" />
+
+    <ListView
+        android:id="@+id/listPayments"
+        android:layout_width="267dp"
+        android:layout_height="405dp"
+        android:divider="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.305"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.288" />
 
     <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="355dp"
-        android:layout_height="44dp"
+        android:layout_width="385dp"
+        android:layout_height="79dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.609"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tStatus"
-        app:layout_constraintVertical_bias="0.0">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.15"
-            android:text="Income:" />
-
-        <EditText
-            android:id="@+id/eIncome"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.35"
-            android:hint="1500"
-            android:inputType="number"
-            tools:ignore="TouchTargetSizeCheck" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.15"
-            android:text="Expenses:" />
-
-        <EditText
-            android:id="@+id/eExpenses"
-            android:layout_width="106dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.35"
-            android:hint="1200"
-            android:inputType="number"
-            tools:ignore="TouchTargetSizeCheck" />
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/bUpdate"
-        android:layout_width="379dp"
-        android:layout_height="48dp"
-        android:layout_below="@+id/lStatus"
-        android:onClick="clicked"
-        android:text="Update"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.338" />
-
-    <LinearLayout
-        android:layout_width="392dp"
-        android:layout_height="78dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.157"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.649">
-
-        <EditText
-            android:id="@+id/eSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.6"
-            android:hint="January"/>
+        app:layout_constraintVertical_bias="0.955">
 
         <Button
-            android:id="@+id/bSearch"
+            android:id="@+id/bPrevious"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.4"
-            android:onClick="clicked"
-            android:text="Search"/>
+            android:layout_weight="1"
+            android:text="Previous" />
 
+        <Button
+            android:id="@+id/bNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Next" />
     </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:backgroundTint="#87CEFA"
+        android:onClick="clicked"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.876"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.813"
+        app:srcCompat="@android:drawable/ic_menu_add" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
