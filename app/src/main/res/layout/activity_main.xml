@@ -76,6 +76,7 @@
         app:layout_constraintVertical_bias="0.338" />
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="392dp"
         android:layout_height="78dp"
         android:orientation="horizontal"
@@ -91,7 +92,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.6"
-            android:hint="January"/>
+            android:hint="January" />
 
         <Button
             android:id="@+id/bSearch"
@@ -99,8 +100,18 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.4"
             android:onClick="clicked"
-            android:text="Search"/>
+            android:text="Search" />
 
     </LinearLayout>
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="383dp"
+        android:layout_height="17dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintVertical_bias="0.254" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
