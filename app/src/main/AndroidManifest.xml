@@ -19,6 +19,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="ui.AddPaymentActivity"
+            android:theme="@style/Base.Theme.AppCompat.Light.Dialog">
+        </activity>
     </application>
 
 </manifest>
