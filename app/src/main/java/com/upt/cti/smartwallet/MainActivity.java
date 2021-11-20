@@ -60,9 +60,15 @@ public class MainActivity extends AppCompatActivity  {
         databaseReference.child("wallet").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot snapshot,String previousChildName) {
-                    Payment payment = snapshot.getValue(Payment.class);
-                    payments.add(payment);
-
+                Payment newPayment = snapshot.getValue(Payment.class);
+                if (newPayment != null) {
+                    newPayment.timestamp = snapshot.getKey();
+                    if (!payments.contains(newPayment))
+                    {
+                        payments.add(newPayment);
+                    }
+                    adapter.notifyDataSetChanged();
+                }
 
             }
 
@@ -88,16 +94,5 @@ public class MainActivity extends AppCompatActivity  {
         }) ;
 
 
-    }
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public void clicked(View view) {
-        switch (view.getId()) {
-            case R.id.bPrevious:
-
-                break;
-            case R.id.bNext:
-                break;
-
-        }
     }
 }
