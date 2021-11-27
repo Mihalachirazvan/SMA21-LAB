@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.ChildEventListener;
@@ -23,6 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,6 +47,17 @@ public class MainActivity extends AppCompatActivity  {
 
     private ValueEventListener databaseListener = null;
 
+    public enum Month {
+        January, February, March, April, May, June, July, August,
+        September, October, November, December;
+
+
+        public static Month intToMonthName(int index) {
+            return Month.values()[index];
+        }
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +79,7 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance("https://smart-wallet-d5bb5-default-rtdb.europe-west1.firebasedatabase.app");
+        final FirebaseDatabase database = FirebaseDatabase.getInstance("https://smart-wallet-d5bb5-default-rtdb.europe-west1.firebasedatabase.app");
         databaseReference = database.getReference();
         AppState.get().setDatabaseReference(databaseReference);
         AppState.get().getDatabaseReference().child("wallet").addChildEventListener(new ChildEventListener() {
@@ -75,6 +88,7 @@ public class MainActivity extends AppCompatActivity  {
                 Payment newPayment = snapshot.getValue(Payment.class);
                 if (newPayment != null) {
                     newPayment.timestamp = snapshot.getKey();
+                    AppState.get().updateLocalBackup(getApplicationContext(), newPayment, true);
                     if (!payments.contains(newPayment))
                     {
                         payments.add(newPayment);
@@ -91,7 +105,7 @@ public class MainActivity extends AppCompatActivity  {
 
                 if (payment != null) {
                     payment.timestamp = snapshot.getKey();
-
+                    AppState.get().updateLocalBackup(getApplicationContext(), payment, true);
                     for (Payment p : payments) {
                         if (p.timestamp.equals(payment.timestamp)) {
                             payments.set(payments.indexOf(p), payment);
@@ -110,7 +124,7 @@ public class MainActivity extends AppCompatActivity  {
 
                     if (payment != null) {
                         payment.timestamp = snapshot.getKey();
-
+                        AppState.get().updateLocalBackup(getApplicationContext(), payment, true);
                         for (Payment p: payments) {
                             if (p.equals(payment)) {
                                 payments.remove(p);
@@ -133,6 +147,21 @@ public class MainActivity extends AppCompatActivity  {
 
             }
         }) ;
+
+        if (!AppState.isNetworkAvailable(this)) {
+            // has local storage already
+            if (AppState.get().hasLocalStorage(this)) {
+                payments = AppState.get().loadFromLocalBackup(this);
+                if(payments!=null)
+                        tStatus.setText("Found " + payments.size() + " payments for " +
+                                Month.intToMonthName(currentMonth) + ".");
+                else
+                    tStatus.setText("Found 0");
+            } else {
+                Toast.makeText(this, "This app needs an internet connection!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
 
     }
     public void clicked(View view){

@@ -2,8 +2,10 @@ package model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.io.Serializable;
+
 @IgnoreExtraProperties
-public class Payment {
+public class Payment implements Serializable {
 
     public String timestamp;
     private double cost;
@@ -20,7 +22,16 @@ public class Payment {
         this.name = name;
         this.type = type;
     }
+    public Payment copy(){
+        Payment copyPayment = new Payment(
+                this.cost,
+                this.name,
+                this.type
+        );
 
+        copyPayment.timestamp = this.timestamp;
+        return copyPayment;
+    }
     public String getName() {
         return name;
     }
