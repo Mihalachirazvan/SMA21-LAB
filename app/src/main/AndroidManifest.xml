@@ -23,6 +23,10 @@
             android:name="ui.AddPaymentActivity"
             android:theme="@style/Base.Theme.AppCompat.Light.Dialog">
         </activity>
+        <activity
+            android:name=".SignupActivity"
+            android:theme="@style/Theme.SmartWallet">
+        </activity>
     </application>
 
 </manifest>

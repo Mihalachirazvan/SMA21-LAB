@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 
 import java.io.File;
@@ -35,7 +36,8 @@ public class AppState implements Serializable {
     private DatabaseReference databaseReference;
     // current payment to be edited or deleted
     private Payment currentPayment;
-
+    // current user
+    private String userId;
     public DatabaseReference getDatabaseReference() {
         return databaseReference;
     }
@@ -108,5 +110,18 @@ public class AppState implements Serializable {
                 (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void clearUserId() {
+        this.userId = null;
+        this.currentPayment = null;
+        FirebaseAuth.getInstance().signOut();
     }
 }

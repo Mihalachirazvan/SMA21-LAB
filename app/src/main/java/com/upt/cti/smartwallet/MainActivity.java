@@ -17,6 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -44,8 +46,14 @@ public class MainActivity extends AppCompatActivity  {
     private Button bNext;
     private FloatingActionButton fabAdd;
     private ListView listPayments;
+    PaymentAdapter adapter;
 
     private ValueEventListener databaseListener = null;
+
+    // Firebase authentication
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private static final int REQ_SIGNIN = 3;
 
     public enum Month {
         January, February, March, April, May, June, July, August,
@@ -71,31 +79,59 @@ public class MainActivity extends AppCompatActivity  {
         final PaymentAdapter adapter = new PaymentAdapter(this, R.layout.item_payment, payments);
         listPayments.setAdapter(adapter);
 
-        listPayments.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        // setup authentication
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                AppState.get().setCurrentPayment(payments.get(i));
-                startActivity(new Intent(getApplicationContext(), AddPaymentActivity.class));
-            }
-        });
+            public void onAuthStateChanged(FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
 
-        final FirebaseDatabase database = FirebaseDatabase.getInstance("https://smart-wallet-d5bb5-default-rtdb.europe-west1.firebasedatabase.app");
-        databaseReference = database.getReference();
-        AppState.get().setDatabaseReference(databaseReference);
-        AppState.get().getDatabaseReference().child("wallet").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot snapshot,String previousChildName) {
-                Payment newPayment = snapshot.getValue(Payment.class);
-                if (newPayment != null) {
-                    newPayment.timestamp = snapshot.getKey();
-                    AppState.get().updateLocalBackup(getApplicationContext(), newPayment, true);
-                    if (!payments.contains(newPayment))
-                    {
-                        payments.add(newPayment);
-                    }
-                    adapter.notifyDataSetChanged();
+                if (user != null) {
+                    TextView tLoginDetail = findViewById(R.id.tLoginDetail);
+                    TextView tUser = findViewById(R.id.tUser);
+                    tLoginDetail.setText("Firebase ID: " + user.getUid());
+                    tUser.setText("Email: " + user.getEmail());
+
+                    initPaymentsList();
+
+                    AppState.get().setUserId(user.getUid());
+                    attachDBListener(user.getUid());
+                } else {
+                    startActivityForResult(new Intent(getApplicationContext(),
+                            SignupActivity.class), REQ_SIGNIN);
                 }
+            }
+        };
+    }
+    private void attachDBListener(String uid) {
+        // setup firebase database
+        final FirebaseDatabase database = FirebaseDatabase.getInstance("https://smart-wallet-f28ef-default-rtdb.europe-west1.firebasedatabase.app/");
+        DatabaseReference databaseReference = database.getReference();
+        AppState.get().setDatabaseReference(databaseReference);
 
+        databaseReference.child("wallet").child(uid).addChildEventListener(new ChildEventListener() {
+            //...
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String s) {
+                try {
+                    Payment payment = dataSnapshot.getValue(Payment.class);
+
+                    if (payment != null) {
+                        payment.timestamp = dataSnapshot.getKey();
+//                        AppState.get().updateLocalBackup(getApplicationContext(), payment, true);
+                        System.out.println(payment.toString());
+
+                        if (!payments.contains(payment)){
+                            payments.add(payment);
+                        }
+
+                        adapter.notifyDataSetChanged();
+                        listPayments.deferNotifyDataSetChanged();
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -148,27 +184,35 @@ public class MainActivity extends AppCompatActivity  {
             }
         }) ;
 
-        if (!AppState.isNetworkAvailable(this)) {
-            // has local storage already
-            if (AppState.get().hasLocalStorage(this)) {
-                payments = AppState.get().loadFromLocalBackup(this);
-                if(payments!=null)
-                        tStatus.setText("Found " + payments.size() + " payments for " +
-                                Month.intToMonthName(currentMonth) + ".");
-                else
-                    tStatus.setText("Found 0");
-            } else {
-                Toast.makeText(this, "This app needs an internet connection!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
     }
     public void clicked(View view){
         switch(view.getId()){
             case R.id.fabAdd:
+                AppState.get().setCurrentPayment(null);
                 startActivity(new Intent(this, AddPaymentActivity.class));
                 break;
+            case R.id.bSignOut:
+                payments = new ArrayList<>();
+                mAuth.signOut();
+                break;
         }
+    }
+    private void initPaymentsList() {
+        payments = new ArrayList<>();
+        adapter = new PaymentAdapter(this, R.layout.item_payment, payments);
+        listPayments.setAdapter(adapter);
     }
 }
